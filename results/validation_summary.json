@@ -1,0 +1,16 @@
+{
+  "candidate_s": "110",
+  "is_valid_format": true,
+  "is_nonzero": true,
+  "all_inputs_periodic": true,
+  "distinct_output_count": 4,
+  "expected_distinct_outputs": 4,
+  "is_strictly_two_to_one": true,
+  "all_preimages_size_2": true,
+  "all_collisions_match_s": true,
+  "satisfies_measurement_equations": true,
+  "oracle_basis_states_agree": true,
+  "oracle_mismatch_count": 0,
+  "overall_pass": true,
+  "error_messages": []
+}

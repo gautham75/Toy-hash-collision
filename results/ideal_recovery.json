@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-30T13:22:36.297788",
+  "configured_secret": "110",
+  "recovered_secret": "110",
+  "rank": 2,
+  "equations": [
+    "111",
+    "110"
+  ],
+  "total_circuit_executions": 10,
+  "quantum_oracle_invocations": 10,
+  "status": "PASS"
+}

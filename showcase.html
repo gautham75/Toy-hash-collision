@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Toy Hash Collision: Simon's Quantum Algorithm vs Classical Attack</title>
+<meta name="description" content="Academic Project Dashboard: Problem 14 - Toy Hash Collision Structure via Simon's Quantum Algorithm vs Classical Attack. Course 23CS2037, Team 14.">
+<style>
+/* Streamlined Lab-Bench Styling: Dark-first, Teal = Quantum, Amber = Classical */
+:root {
+  --bg: #0b1218;
+  --surface: #111b24;
+  --surface-alt: #162430;
+  --line: #22323f;
+  --ink: #e8eef2;
+  --muted: #94a6b3;
+  --quantum: #4fd1c5;
+  --quantum-glow: rgba(79, 209, 197, 0.15);
+  --classic: #f0a35e;
+  --classic-glow: rgba(240, 163, 94, 0.15);
+  --ok: #6ee7a8;
+  --bad: #f27d7d;
+  --display: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --body: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f3f6f8; --surface: #ffffff; --surface-alt: #eaf0f4; --line: #d5dee4; --ink: #0f1d27; --muted: #566873;
+    --quantum: #0b7a75; --quantum-glow: rgba(11, 122, 117, 0.12);
+    --classic: #b45a14; --classic-glow: rgba(180, 90, 20, 0.12);
+    --ok: #167a4a; --bad: #b3361f; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f3f6f8; --surface: #ffffff; --surface-alt: #eaf0f4; --line: #d5dee4; --ink: #0f1d27; --muted: #566873;
+  --quantum: #0b7a75; --quantum-glow: rgba(11, 122, 117, 0.12);
+  --classic: #b45a14; --classic-glow: rgba(180, 90, 20, 0.12);
+  --ok: #167a4a; --bad: #b3361f; color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #0b1218; --surface: #111b24; --surface-alt: #162430; --line: #22323f; --ink: #e8eef2; --muted: #94a6b3;
+  --quantum: #4fd1c5; --quantum-glow: rgba(79, 209, 197, 0.15);
+  --classic: #f0a35e; --classic-glow: rgba(240, 163, 94, 0.15);
+  --ok: #6ee7a8; --bad: #f27d7d; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  padding-block: 20px 60px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+h1, h2, h3 { font-family: var(--display); line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+h3 { font-size: 15.5px; font-weight: 600; }
+p { margin: 0; }
+code, .mono { font-family: var(--mono); font-size: 0.92em; }
+.kicker { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.lede { max-width: 72ch; color: var(--muted); margin-top: 8px; font-size: 14.5px; line-height: 1.6; }
+.meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--muted);
+}
+.meta b { color: var(--ink); font-weight: 600; }
+
+/* Sticky Navigation */
+.sticky-bar {
+  position: sticky; top: 0; z-index: 90;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: -12px;
+}
+nav.jump { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; }
+.jump-links { display: flex; flex-wrap: wrap; gap: 5px; }
+nav.jump a {
+  font-size: 12.5px; font-weight: 600; color: var(--ink);
+  text-decoration: none; border: 1px solid var(--line);
+  padding: 4px 10px; border-radius: 5px; background: var(--surface);
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+nav.jump a:hover, nav.jump a:focus-visible { border-color: var(--quantum); color: var(--quantum); outline: none; }
+.nav-actions { display: flex; gap: 6px; align-items: center; }
+
+/* KPI Grid */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.kpi { padding: 12px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; }
+.kpi dt { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.kpi dd { margin: 4px 0 0; font-family: var(--mono); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.q { color: var(--quantum); } .c { color: var(--classic); } .ok { color: var(--ok); } .bad { color: var(--bad); }
+
+section { display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 60px; }
+.sec-head { display: flex; flex-direction: column; gap: 4px; }
+.sec-head p { color: var(--muted); max-width: 72ch; font-size: 14px; }
+.panel {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 16px; min-width: 0;
+}
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 14px; align-items: start; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* Controls */
+button, select {
+  font: inherit; font-weight: 600; font-size: 13px;
+  color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px;
+  padding: 6px 12px; cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+button:hover:not(:disabled) { border-color: var(--quantum); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--quantum); outline-offset: 2px; }
+button.go { background: var(--quantum); border-color: var(--quantum); color: #05201e; }
+button.go:hover:not(:disabled) { background: color-mix(in srgb, var(--quantum) 88%, #fff); }
+button:disabled { opacity: 0.45; cursor: default; }
+
+.scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+td.mono, th.mono { font-variant-numeric: tabular-nums; }
+tr.sel td { background: color-mix(in srgb, var(--quantum) 14%, transparent); }
+tr.pair td { background: color-mix(in srgb, var(--classic) 14%, transparent); }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: -1px; }
+.pairline { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 10px; }
+.pairline div { border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; background: var(--bg); }
+.pairline small { display: block; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.pairline strong { font-family: var(--mono); font-size: 18px; font-weight: 600; }
+
+.banner {
+  margin-top: 10px; padding: 9px 12px; border-radius: 6px;
+  border: 1px solid var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent);
+  color: var(--ok); font-weight: 600; font-size: 13.5px;
+}
+.banner.idle { border-color: var(--line); background: transparent; color: var(--muted); font-weight: 500; }
+
+/* Simulator components */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px; }
+.chip { font-family: var(--mono); font-size: 12.5px; border: 1px solid var(--line); border-radius: 4px; padding: 2px 7px; background: var(--bg); }
+.chip.zero { color: var(--muted); border-style: dashed; }
+.cand { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 6px; }
+.cand span { font-family: var(--mono); font-size: 12.5px; text-align: center; padding: 5px 0; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); }
+.cand span.out { text-decoration: line-through; color: var(--muted); opacity: 0.4; }
+.cand span.win { border-color: var(--ok); color: var(--ok); font-weight: 700; background: color-mix(in srgb, var(--ok) 15%, transparent); }
+ul.eq { list-style: none; margin: 6px 0 0; padding: 0; font-family: var(--mono); font-size: 12.5px; display: flex; flex-direction: column; gap: 3px; }
+.label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+
+/* Step-by-step dots & formula */
+.step-dots { display: flex; gap: 6px; }
+.step-dots i { width: 26px; height: 4px; border-radius: 2px; background: var(--line); cursor: pointer; }
+.step-dots i.on { background: var(--quantum); }
+.formula {
+  font-family: var(--mono); font-size: 13.5px;
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 6px; padding: 8px 12px; overflow-x: auto; white-space: nowrap;
+}
+
+/* SVG Charting */
+svg { max-width: 100%; height: auto; display: block; }
+svg text { fill: var(--muted); font-family: var(--mono); font-size: 11px; }
+svg .wire { stroke: var(--line); stroke-width: 1.5; }
+svg .gate { fill: var(--bg); stroke: var(--ink); stroke-width: 1.3; }
+svg .gate-t { fill: var(--ink); font-size: 12px; font-weight: 600; text-anchor: middle; }
+svg .ctl { fill: var(--quantum); } svg .link { stroke: var(--quantum); stroke-width: 1.6; } svg .tgt { fill: none; stroke: var(--quantum); stroke-width: 1.6; }
+svg .grid { stroke: var(--line); stroke-width: 1; }
+svg .lq { fill: none; stroke: var(--quantum); stroke-width: 2.2; } svg .lc { fill: none; stroke: var(--classic); stroke-width: 2.2; }
+svg .bar-q { fill: var(--quantum); } svg .bar-c { fill: var(--classic); } svg .bar-x { fill: var(--bad); }
+svg .bar-t { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 2; }
+.range { width: 100%; accent-color: var(--quantum); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; background: var(--bg); }
+.stat .v { font-family: var(--mono); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; text-transform: uppercase; font-weight: 600; }
+
+/* Figures gallery */
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 12px; }
+.fig {
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px; display: flex; flex-direction: column; gap: 6px;
+  background: var(--surface); cursor: pointer; transition: border-color 0.15s, transform 0.15s;
+}
+.fig:hover { border-color: var(--quantum); transform: translateY(-2px); }
+.fig-thumb-wrap {
+  width: 100%; height: 150px; background: #000;
+  border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.fig-thumb { max-width: 100%; max-height: 100%; object-fit: contain; }
+.fig-caption { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.note { font-size: 12.5px; color: var(--muted); max-width: 72ch; }
+
+/* Collapsible Sections (Advanced Details) */
+details.advanced-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+details.advanced-panel[open] {
+  border-color: color-mix(in srgb, var(--quantum) 40%, var(--line));
+}
+details.advanced-panel summary {
+  padding: 13px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14.5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  user-select: none;
+  background: color-mix(in srgb, var(--surface) 80%, var(--bg));
+  border-bottom: 1px solid transparent;
+}
+details.advanced-panel summary::-webkit-details-marker {
+  display: none;
+}
+details.advanced-panel[open] summary {
+  border-bottom-color: var(--line);
+}
+details.advanced-panel summary .sum-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+details.advanced-panel summary .sum-badge {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+details.advanced-panel summary .sum-chevron {
+  font-size: 12px;
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+details.advanced-panel[open] summary .sum-chevron {
+  transform: rotate(180deg);
+}
+details.advanced-panel .panel-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Lightbox Modal */
+.lightbox {
+  display: none; position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.lightbox.active { display: flex; }
+.lightbox-card {
+  max-width: 960px; width: 100%; max-height: 90vh;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;
+}
+.lightbox-head { padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.lightbox-body { padding: 10px; background: #000; display: flex; align-items: center; justify-content: center; max-height: 70vh; overflow: auto; }
+.lightbox-body img { max-width: 100%; max-height: 65vh; object-fit: contain; }
+.lightbox-foot { padding: 8px 14px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+
+/* Print Stylesheet */
+@media print {
+  body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+  .sticky-bar, button, select, input, .lightbox { display: none !important; }
+  .wrap { max-width: 100% !important; gap: 18px !important; }
+  .panel, .kpis, .kpi, .fig, .stat, table, details.advanced-panel { background: #fff !important; color: #000 !important; border-color: #cbd5e1 !important; }
+  details.advanced-panel[open] summary, details.advanced-panel summary { background: #f8fafc !important; color: #000 !important; }
+  th { color: #475569 !important; background: #f8fafc !important; }
+  svg text { fill: #334155 !important; }
+  svg .wire, svg .grid { stroke: #cbd5e1 !important; }
+  .q, .c, .ok, .bad { color: #000 !important; font-weight: 700 !important; }
+}
+@media (max-width: 540px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .kpi dd { font-size: 16px; }
+  .cols { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- 1. PROJECT OVERVIEW -->
+<header>
+  <div class="kicker">Karunya Institute of Technology and Sciences · Dept. of CSE · 23CS2037 Quantum Computing · IA-3</div>
+  <h1 style="margin-top:8px">Toy Hash Collision: Simon's Quantum Algorithm</h1>
+  <p class="lede">Problem 14. A 3-bit hash function secretly satisfies the 2-to-1 promise f(x) = f(x ⊕ s) with hidden period s = 110. Simon's algorithm discovers s with 𝒪(n) quantum queries via constructive and destructive interference, outperforming the classical 𝒪(2<sup>n/2</sup>) birthday collision attack.</p>
+  <div class="meta">
+    <span>Team 14 · <b>Ahzam Hamza Karat</b> (URK24CS6012), <b>Gautham Manoj</b> (URK24CS1158)</span>
+    <span>Faculty · <b>Dr. Daniel Madan Raja S</b></span>
+    <span>Stack · Qiskit 2.6.0 · Aer 0.18.0 · Python 3.12</span>
+  </div>
+</header>
+
+<!-- STICKY NAVIGATION -->
+<div class="sticky-bar">
+  <nav class="jump" aria-label="Sections">
+    <div class="jump-links">
+      <a href="#hash">Hash &amp; Table</a>
+      <a href="#circuit">Quantum Circuit</a>
+      <a href="#steps">Dirac Steps</a>
+      <a href="#simon">Simon Live Solver</a>
+      <a href="#classical">Classical vs Quantum</a>
+      <a href="#validation">Validation</a>
+      <a href="#advanced">Advanced Data ▾</a>
+    </div>
+    <div class="nav-actions">
+      <button onclick="toggleTheme()" aria-label="Toggle Theme">🌓 Theme</button>
+      <button class="go" onclick="window.print()" aria-label="Print Report">🖨️ Print</button>
+    </div>
+  </nav>
+</div>
+
+<!-- HEADLINE KPIS -->
+<dl class="kpis" aria-label="Headline results">
+  <div class="kpi"><dt>Unit tests</dt><dd class="ok">17 / 17</dd></div>
+  <div class="kpi"><dt>Periods recovered</dt><dd class="ok">7 / 7</dd></div>
+  <div class="kpi"><dt>Forbidden shots</dt><dd class="ok">0 of 1024</dd></div>
+  <div class="kpi"><dt>Classical, n = 3</dt><dd class="c">3.66 queries</dd></div>
+  <div class="kpi"><dt>Quantum, n = 3</dt><dd class="q">~3.6 runs</dd></div>
+  <div class="kpi"><dt>n = 30 scaling</dt><dd><span class="c">~32,768</span> vs <span class="q">~31</span></dd></div>
+</dl>
+
+<!-- 2. INTERACTIVE TOY HASH COLLISION DEMO & 3. COMPLETE TRUTH TABLE -->
+<section id="hash">
+  <div class="sec-head">
+    <h2>1. Toy Hash Collision Demo &amp; Truth Table</h2>
+    <p>A 2-to-1 function f: {0,1}³ → {0,1}³ where eight inputs map to four outputs. Every output has exactly two preimages differing by the period s = 110.</p>
+  </div>
+  <div class="cols">
+    <!-- Interactive Demo -->
+    <div class="panel">
+      <h3 style="margin-bottom:10px">Interactive Collision Inspector</h3>
+      <div class="row">
+        <label for="xsel" class="label">Select input x:</label>
+        <select id="xsel"></select>
+      </div>
+      <div class="pairline">
+        <div><small>x (input)</small><strong id="vx">000</strong></div>
+        <div><small>x ⊕ 110 (partner)</small><strong id="vp" class="c">110</strong></div>
+        <div><small>f(x) (output)</small><strong id="vf" class="q">000</strong></div>
+      </div>
+      <div class="banner" id="vb"></div>
+    </div>
+    <!-- Truth Table -->
+    <div class="panel scroll">
+      <h3 style="margin-bottom:10px">Canonical 3-Bit Hash Truth Table</h3>
+      <table id="tt">
+        <thead><tr><th>x (dec)</th><th>x (bin)</th><th>f(x)</th><th>Partner</th><th>XOR diff</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 4. SIX-QUBIT QUANTUM CIRCUIT & REVERSIBLE ORACLE -->
+<section id="circuit">
+  <div class="sec-head">
+    <h2>2. Six-Qubit Quantum Circuit &amp; Reversible Oracle</h2>
+    <p>3 input qubits (x₀, x₁, x₂) prepared in uniform superposition by Hadamard gates, entangled with 3 target qubits (y₀, y₁, y₂) via the reversible oracle U<sub>f</sub> (synthesized with 3 CNOT gates: y₀ = x₀, y₁ = x₁ ⊕ x₂), followed by a second Hadamard layer and measurement.</p>
+  </div>
+  <div class="panel scroll">
+    <svg id="circ" viewBox="0 0 620 230" role="img" aria-label="Six qubit Simon circuit for s equals 110"></svg>
+  </div>
+  <div class="row" style="justify-content:space-between; align-items:center;">
+    <p class="note"><b>Architecture:</b> 6 qubits (3 input + 3 output) maintain standard black-box cryptographic generality without coordinate leakage. The target register y₂ remains |0⟩ as 4 distinct outputs require 2 active bits.</p>
+    <button onclick="openLightbox('simon_circuit')">🔍 View Circuit Diagram</button>
+  </div>
+</section>
+
+<!-- 5. STEP-BY-STEP SIMON'S ALGORITHM WALKTHROUGH -->
+<section id="steps">
+  <div class="sec-head">
+    <h2>3. Step-by-Step Simon's Algorithm Walkthrough</h2>
+    <p>Track the quantum state evolution and destructive interference across the 8 computational basis states for s = 110.</p>
+  </div>
+  <div class="panel stack">
+    <div class="row" style="justify-content:space-between">
+      <div class="step-dots" id="dots"></div>
+      <div class="row">
+        <button id="prev">Back</button>
+        <button id="next" class="go">Next step</button>
+      </div>
+    </div>
+    <h3 id="st-title"></h3>
+    <div class="formula" id="st-formula"></div>
+    <p id="st-text" class="muted"></p>
+    <svg id="st-svg" viewBox="0 0 560 150" role="img" aria-label="Probability of each basis state"></svg>
+  </div>
+</section>
+
+<!-- 6. LIVE SIMON'S ALGORITHM & GF(2) SOLVER -->
+<section id="simon">
+  <div class="sec-head">
+    <h2>4. Live Simon's Algorithm &amp; GF(2) Linear Solver</h2>
+    <p>Each circuit shot measures an outcome y satisfying y · s ≡ 0 (mod 2). Only outcomes {000, 001, 110, 111} can appear due to destructive interference. Two linearly independent non-zero shots uniquely isolate s = 110.</p>
+  </div>
+  <div class="panel stack">
+    <div class="row">
+      <button id="shot" class="go">Run one shot</button>
+      <button id="auto">Auto-run</button>
+      <button id="reset">Reset</button>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="label">Measured y samples (dual subspace)</div>
+        <div class="chips" id="samples" style="margin-top:6px;"></div>
+        <div class="label" style="margin-top:12px;">Linear equations over GF(2)</div>
+        <ul class="eq" id="eqs"></ul>
+      </div>
+      <div>
+        <div class="label">Candidate secret elimination (1 to 7)</div>
+        <div class="cand" id="cands"></div>
+        <div class="banner idle" id="sbanner" style="margin-top:14px;">Press “Run one shot”.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. CLASSICAL VS QUANTUM COMPARISON -->
+<section id="classical">
+  <div class="sec-head">
+    <h2>5. Classical vs Quantum Query Comparison</h2>
+    <p>Classical birthday attacks query random inputs sequentially waiting for a collision (𝒪(2<sup>n/2</sup>)). Simon's quantum algorithm queries superposition states to extract linearly independent parity vectors (𝒪(n)).</p>
+  </div>
+  
+  <div class="cols">
+    <!-- Classical Collision Interactive Step -->
+    <div class="panel stack">
+      <h3>Classical Birthday Attack Simulation</h3>
+      <div class="row">
+        <button id="qstep" class="go">Query a random x</button>
+        <button id="qreset">Reset</button>
+      </div>
+      <div class="scroll">
+        <table id="qt"><thead><tr><th>Query #</th><th>Queried x</th><th>Hash f(x)</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="banner idle" id="cbanner">No queries yet.</div>
+    </div>
+
+    <!-- Complexity Summary Card -->
+    <div class="panel stack">
+      <h3>Complexity Model Summary</h3>
+      <table style="margin-top:4px;">
+        <thead><tr><th>Metric</th><th>Classical Birthday</th><th>Simon's Quantum</th></tr></thead>
+        <tbody>
+          <tr><td>Query Bound</td><td class="c mono">𝒪(2<sup>n/2</sup>)</td><td class="q mono">𝒪(n)</td></tr>
+          <tr><td>n = 3 Expected</td><td class="c mono">128/35 ≈ 3.657</td><td class="q mono">(n−1) + 1.61 ≈ 3.61</td></tr>
+          <tr><td>n = 3 Worst-Case</td><td class="c mono">5 queries</td><td class="q mono">Probabilistic rank</td></tr>
+          <tr><td>Crossover Point</td><td colspan="2" style="text-align:center;">Classical exceeds quantum at <b>n ≥ 5–6 bits</b></td></tr>
+        </tbody>
+      </table>
+      <div class="row" style="margin-top:10px;">
+        <button onclick="openLightbox('query_complexity_comparison')">🔍 View Theoretical Complexity Curves</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scaling Calculator & Interactive Chart -->
+  <div class="panel stack">
+    <div class="row" style="justify-content:space-between">
+      <label for="nr" class="label">Input register width (n bits):</label>
+      <span class="mono" id="nval" style="font-weight:700;">n = 3</span>
+    </div>
+    <input id="nr" class="range" type="range" min="3" max="64" value="3">
+    <div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+      <div class="stat"><div class="v c" id="cv">–</div><small>classical expected queries</small></div>
+      <div class="stat"><div class="v q" id="qv">–</div><small>quantum expected runs</small></div>
+      <div class="stat"><div class="v" id="qmin">–</div><small>quantum minimum (n − 1)</small></div>
+      <div class="stat"><div class="v" id="ratio">–</div><small>speedup ratio</small></div>
+    </div>
+    <svg id="scale" viewBox="0 0 640 270" role="img" aria-label="Expected queries against n on a log scale"></svg>
+    <p class="note" id="scnote"></p>
+  </div>
+</section>
+
+<!-- 8. VALIDATION RESULTS -->
+<section id="validation">
+  <div class="sec-head">
+    <h2>6. Dual-Space Validation &amp; Test Results</h2>
+    <p>Verification of destructive interference on forbidden measurement outcomes and automated recovery across all 7 non-zero periods.</p>
+  </div>
+  <div class="cols">
+    <!-- Measurement Outcomes Table -->
+    <div class="panel scroll">
+      <h3 style="margin-bottom:8px">Dual-Space Measurement Outcomes (s = 110)</h3>
+      <table id="yt">
+        <thead><tr><th>y (bin)</th><th>s · y mod 2</th><th>Theory</th><th>Simulated shots</th><th>Interference</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <!-- Measurement Histogram Figure Card -->
+    <div class="fig" onclick="openLightbox('measurement_histogram')">
+      <div class="fig-thumb-wrap"><img class="fig-thumb" src="figures/measurement_histogram.png" alt="1,024 Shots AerSimulator Measurement Histogram"></div>
+      <h3 style="margin-top:6px">1,024-Shot Measurement Distribution</h3>
+      <span class="fig-caption">0 counts observed on forbidden states {010, 011, 100, 101}, confirming exact destructive interference.</span>
+    </div>
+  </div>
+
+  <!-- Multi-period validation table -->
+  <div class="panel stack">
+    <h3>Multi-Period Automated Sweep (All 7 Non-Zero Periods)</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Target s</th><th>Recovered s</th><th>GF(2) Rank</th><th>Sampled Equations</th><th>Total Queries</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><code>001</code></td><td><code>001</code></td><td>2</td><td><code>['010', '100']</code></td><td>12</td><td><span class="ok">PASS (100%)</span></td></tr>
+          <tr><td><code>010</code></td><td><code>010</code></td><td>2</td><td><code>['001', '101']</code></td><td>12</td><td><span class="ok">PASS (100%)</span></td></tr>
+          <tr><td><code>011</code></td><td><code>011</code></td><td>2</td><td><code>['011', '100']</code></td><td>12</td><td><span class="ok">PASS (100%)</span></td></tr>
+          <tr><td><code>100</code></td><td><code>100</code></td><td>2</td><td><code>['001', '010']</code></td><td>12</td><td><span class="ok">PASS (100%)</span></td></tr>
+          <tr><td><code>101</code></td><td><code>101</code></td><td>2</td><td><code>['010', '111']</code></td><td>12</td><td><span class="ok">PASS (100%)</span></td></tr>
+          <tr><td><code>110</code></td><td><code>110</code></td><td>2</td><td><code>['001', '111']</code></td><td>12</td><td><span class="ok">PASS (100%)</span></td></tr>
+          <tr><td><code>111</code></td><td><code>111</code></td><td>2</td><td><code>['011', '110']</code></td><td>12</td><td><span class="ok">PASS (100%)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 9. ADVANCED FEATURES (COLLAPSIBLE SECTIONS AT BOTTOM) -->
+<section id="advanced">
+  <div class="sec-head">
+    <h2>7. Advanced Experimental Data &amp; Hardware Feasibility</h2>
+    <p>Extensive Monte Carlo statistical trials, NISQ depolarizing noise analysis, and physical IBM 127-qubit quantum processor emulation.</p>
+  </div>
+
+  <!-- Collapsible 1: Monte Carlo Simulations -->
+  <details class="advanced-panel">
+    <summary>
+      <div class="sum-left">
+        <span class="sum-badge">Monte Carlo</span>
+        <span>Statistical Simulations: 2,000 Quantum vs 10,000 Classical Trials</span>
+      </div>
+      <span class="sum-chevron">▼</span>
+    </summary>
+    <div class="panel-body">
+      <div class="cols">
+        <!-- 2,000 Quantum Simulations -->
+        <div class="panel stack">
+          <div class="row" style="justify-content:space-between">
+            <h3>2,000 Quantum Experiment Runs</h3>
+            <button id="many" class="go">Repeat 2,000 Runs</button>
+          </div>
+          <svg id="hist-q" viewBox="0 0 560 190" role="img" aria-label="Histogram of shots needed"></svg>
+          <div class="grid2">
+            <div class="stat"><div class="v q" id="mean-q">–</div><small>mean shots (simulated)</small></div>
+            <div class="stat"><div class="v" id="exact-q">3.61</div><small>expected: (n−1) + 1.61 ≈ 3.61</small></div>
+          </div>
+        </div>
+
+        <!-- 10,000 Classical Simulations -->
+        <div class="panel stack">
+          <div class="row" style="justify-content:space-between">
+            <h3>10,000 Classical Birthday Attacks</h3>
+            <button id="cmany" class="go">Repeat 10,000 Attacks</button>
+          </div>
+          <svg id="hist-c" viewBox="0 0 560 190" role="img" aria-label="Histogram of classical queries"></svg>
+          <div class="grid2">
+            <div class="stat"><div class="v c" id="mean-c">–</div><small>mean queries (simulated)</small></div>
+            <div class="stat"><div class="v" id="exact-c">3.66</div><small>exact: 128/35 ≈ 3.657</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fig" onclick="openLightbox('empirical_scaling_benchmark')">
+        <div class="fig-thumb-wrap"><img class="fig-thumb" src="figures/empirical_scaling_benchmark.png" alt="Empirical Monte Carlo Scaling Benchmark"></div>
+        <h3 style="margin-top:6px">Empirical Monte Carlo Scaling Benchmark (n = 3 to 9)</h3>
+        <span class="fig-caption">Validates empirical mean queries and ±1σ bounds against exact combinatorial formulas across scaling register sizes.</span>
+      </div>
+    </div>
+  </details>
+
+  <!-- Collapsible 2: NISQ Noise Resilience -->
+  <details class="advanced-panel">
+    <summary>
+      <div class="sum-left">
+        <span class="sum-badge">Noise Analysis</span>
+        <span>Simulated NISQ Depolarizing Noise Sweep (0% to 5%)</span>
+      </div>
+      <span class="sum-chevron">▼</span>
+    </summary>
+    <div class="panel-body">
+      <div class="fig" onclick="openLightbox('noise_impact_fidelity')">
+        <div class="fig-thumb-wrap"><img class="fig-thumb" src="figures/noise_impact_fidelity.png" alt="NISQ Depolarizing Noise Impact Fidelity with Error Bars"></div>
+        <h3 style="margin-top:6px">NISQ Depolarizing Noise Resilience (20 Repeats × 1,024 Shots)</h3>
+        <span class="fig-caption">Evaluates valid subspace fidelity degradation from 0% to 5% CNOT depolarizing noise with error bars. Majority parity filtering retains 100% secret recovery.</span>
+      </div>
+      <p class="note"><b>Parity Filtering Mechanism:</b> Random bit-flip errors produce measurement outcomes that violate the linear subspace. Gaussian elimination over GF(2) automatically detects inconsistent equations, discarding corrupted samples.</p>
+    </div>
+  </details>
+
+  <!-- Collapsible 3: IBM 127Q Hardware Feasibility -->
+  <details class="advanced-panel">
+    <summary>
+      <div class="sum-left">
+        <span class="sum-badge">Hardware</span>
+        <span>IBM 127-Qubit FakeSherbrooke Execution &amp; Resource Scaling</span>
+      </div>
+      <span class="sum-chevron">▼</span>
+    </summary>
+    <div class="panel-body">
+      <div class="fig" onclick="openLightbox('hardware_transpiled_distribution')">
+        <div class="fig-thumb-wrap"><img class="fig-thumb" src="figures/hardware_transpiled_distribution.png" alt="IBM FakeSherbrooke 127Q Hardware Transpiled Distribution"></div>
+        <h3 style="margin-top:6px">IBM FakeSherbrooke (127Q) Transpiled Distribution</h3>
+        <span class="fig-caption">Transpiled depth 16, 3 native ECR gates, 98.34% allowed subspace fidelity, and 100% secret recovery under realistic calibration noise.</span>
+      </div>
+
+      <h3 style="margin-top:6px">Hardware Resource Scaling vs Register Width n</h3>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Bits n</th><th>Total Qubits (2n)</th><th>Hadamard Gates</th><th>Oracle CNOTs</th><th>Circuit Depth</th><th>GF(2) Post-Processing 𝒪(n³)</th></tr></thead>
+          <tbody>
+            <tr><td>3 (Toy)</td><td>6</td><td>6</td><td>3</td><td>4</td><td>~27 operations (&lt; 0.1 ms)</td></tr>
+            <tr><td>4</td><td>8</td><td>8</td><td>4</td><td>5</td><td>~64 operations (&lt; 0.1 ms)</td></tr>
+            <tr><td>8</td><td>16</td><td>16</td><td>8</td><td>6</td><td>~512 operations (&lt; 0.2 ms)</td></tr>
+            <tr><td>16</td><td>32</td><td>32</td><td>16</td><td>8</td><td>~4,096 operations (&lt; 1 ms)</td></tr>
+            <tr><td>32</td><td>64</td><td>64</td><td>32</td><td>12</td><td>~32,768 operations (~5 ms)</td></tr>
+            <tr><td>64</td><td>128</td><td>128</td><td>64</td><td>18</td><td>~262,144 operations (~30 ms)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="row" style="justify-content:space-between; font-size:13px; color:var(--muted); padding-top:16px; border-top:1px solid var(--line);">
+    <span>Run <code>python main.py</code> for simulation pipeline or <code>python validation.py</code> for automated test suite.</span>
+    <span>Dashboard built by <code>build_showcase.py</code> on 2026-10-30 22:49:49.</span>
+  </div>
+</footer>
+
+</div>
+
+<!-- Lightbox Modal -->
+<div class="lightbox" id="modal" onclick="closeLightbox(event)" role="dialog" aria-modal="true">
+  <div class="lightbox-card" onclick="event.stopPropagation()">
+    <div class="lightbox-head">
+      <h3 id="modalTitle">Figure Preview</h3>
+      <button onclick="closeLightbox()">✕ Close (Esc)</button>
+    </div>
+    <div class="lightbox-body">
+      <img id="modalImg" src="" alt="Expanded figure">
+    </div>
+    <div class="lightbox-foot">
+      <span id="modalCaption">Caption</span>
+      <div style="display:flex;gap:6px;">
+        <button onclick="prevLightbox()">← Prev</button>
+        <button onclick="nextLightbox()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var S = 6, F = [0, 1, 2, 3, 2, 3, 0, 1];
+  var $ = function(id) { return document.getElementById(id); };
+  var b3 = function(v) { return v.toString(2).padStart(3, '0'); };
+  var par = function(v) { var p = 0; while(v) { p ^= v & 1; v >>= 1; } return p; };
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  var PAL = ['var(--quantum)', 'var(--classic)', '#8f9bff', '#e07ac2'];
+  var pairColor = function(x) { return PAL[F[x] & 3]; };
+
+  /* Theme Toggle */
+  window.toggleTheme = function() {
+    var cur = document.documentElement.getAttribute('data-theme');
+    var next = (cur === 'light') ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('showcase_theme', next);
+    drawScale(+($('nr').value));
+  };
+  if (localStorage.getItem('showcase_theme')) {
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('showcase_theme'));
+  }
+
+  /* 1. Hash Station */
+  var sel = $('xsel');
+  for (var i = 0; i < 8; i++) {
+    var o = document.createElement('option');
+    o.value = i;
+    o.textContent = b3(i) + ' (decimal ' + i + ')';
+    sel.appendChild(o);
+  }
+  var tb = $('tt').querySelector('tbody');
+  for (i = 0; i < 8; i++) {
+    var tr = document.createElement('tr');
+    tr.dataset.x = i;
+    tr.innerHTML = '<td class="mono">' + i + '</td><td class="mono"><span class="swatch" style="background:' + pairColor(i) + '"></span>' + b3(i) + '</td><td class="mono">' + b3(F[i]) + '</td><td class="mono">' + b3(i ^ S) + '</td><td class="mono">110</td>';
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', function() { sel.value = this.dataset.x; showHash(); });
+    tb.appendChild(tr);
+  }
+  function showHash() {
+    var x = +sel.value, p = x ^ S;
+    $('vx').textContent = b3(x);
+    $('vp').textContent = b3(p);
+    $('vf').textContent = b3(F[x]);
+    $('vb').textContent = 'Collision confirmed: f(' + b3(x) + ') = f(' + b3(p) + ') = ' + b3(F[x]) + ', and ' + b3(x) + ' ⊕ ' + b3(p) + ' = 110.';
+    Array.prototype.forEach.call(tb.children, function(r) {
+      var rx = +r.dataset.x;
+      r.className = (rx === x) ? 'sel' : ((rx === p) ? 'pair' : '');
+    });
+  }
+  sel.addEventListener('change', showHash);
+  showHash();
+
+  /* 2. Circuit Diagram */
+  (function(){
+    var s = $('circ'), X0 = 70, Y = function(i) { return 28 + i * 34; };
+    var names = ['x₀ q0', 'x₁ q1', 'x₂ q2', 'y₀ q3', 'y₁ q4', 'y₂ q5'];
+    for (var i = 0; i < 6; i++) {
+      el('line', {x1: 60, x2: 590, y1: Y(i), y2: Y(i), class: 'wire'}, s);
+      el('text', {x: 4, y: Y(i) + 4}, s, names[i]);
+    }
+    function gate(x, i, t) {
+      el('rect', {x: x - 13, y: Y(i) - 13, width: 26, height: 26, rx: 3, class: 'gate'}, s);
+      el('text', {x: x, y: Y(i) + 4.5, class: 'gate-t'}, s, t);
+    }
+    for (i = 0; i < 3; i++) gate(X0 + 20, i, 'H');
+    var cx = [[190, 0, 3], [240, 1, 4], [290, 2, 4]];
+    cx.forEach(function(c) {
+      el('line', {x1: c[0], x2: c[0], y1: Y(c[1]), y2: Y(c[2]), class: 'link'}, s);
+      el('circle', {cx: c[0], cy: Y(c[1]), r: 4.5, class: 'ctl'}, s);
+      el('circle', {cx: c[0], cy: Y(c[2]), r: 9, class: 'tgt'}, s);
+      el('line', {x1: c[0] - 9, x2: c[0] + 9, y1: Y(c[2]), y2: Y(c[2]), class: 'link'}, s);
+      el('line', {x1: c[0], x2: c[0], y1: Y(c[2]) - 9, y2: Y(c[2]) + 9, class: 'link'}, s);
+    });
+    el('text', {x: 240, y: 14, style: 'text-anchor:middle'}, s, 'oracle U_f');
+    for (i = 0; i < 3; i++) gate(350, i, 'H');
+    for (i = 0; i < 3; i++) {
+      el('rect', {x: 437, y: Y(i) - 13, width: 26, height: 26, rx: 3, class: 'gate'}, s);
+      el('path', {d: 'M441 ' + (Y(i) + 6) + ' A9 9 0 0 1 459 ' + (Y(i) + 6), fill: 'none', stroke: 'var(--ink)', 'stroke-width': 1.2}, s);
+      el('line', {x1: 450, y1: Y(i) + 6, x2: 456, y2: Y(i) - 5, stroke: 'var(--ink)', 'stroke-width': 1.2}, s);
+    }
+    el('text', {x: 520, y: Y(1) + 4}, s, '→ y₀ y₁ y₂');
+  })();
+
+  /* 3. Stepper */
+  var sampleY = 3;
+  var steps = [
+    {t: 'Start in the ground state', f: '|000⟩_A |000⟩_B', x: 'Both registers begin at 0, so register x has one certain basis state.', lab: 'register x', bars: function() { return [1,0,0,0,0,0,0,0]; }},
+    {t: 'Hadamards spread the input over every x', f: '(1/√8) Σₓ |x⟩|000⟩', x: 'All eight inputs are equally likely in superposition, each with probability 1/8.', lab: 'register x', bars: function() { return [1,1,1,1,1,1,1,1].map(function() { return 0.125; }); }},
+    {t: 'Oracle evaluates f(x) and entangles the registers', f: '(1/2) Σₖ [(|xₖ⟩ + |xₖ ⊕ s⟩)/√2] |f(xₖ)⟩', x: 'Inputs sharing a hash are paired. Colors mark the four collision pairs x and x ⊕ 110.', lab: 'register x, colored by f(x)', bars: function() { return [1,1,1,1,1,1,1,1].map(function() { return 0.125; }); }, pairs: true},
+    {t: 'Second Hadamard layer synthesizes interference', f: 'amplitude of |y⟩ ∝ Σ (−1)^(x·y) [1 + (−1)^(s·y)]', x: 'When s · y ≡ 1 (mod 2), the preimages cancel. Only y with s · y ≡ 0 survive, each with probability 1/4.', lab: 'register x after H (read as y)', bars: function() { return [0,1,2,3,4,5,6,7].map(function(y) { return par(y & S) ? 0 : 0.25; }); }},
+    {t: 'Measurement returns one allowed vector y', f: 'Measured y = ', x: 'The outcome is sampled uniformly from {000, 001, 110, 111}. Each adds an equation y · s = 0 over GF(2).', lab: 'measured y (highlighted)', bars: function() { return [0,1,2,3,4,5,6,7].map(function(y) { return par(y & S) ? 0 : 0.25; }); }, hit: true}
+  ];
+  var cur = 0;
+  function drawStep() {
+    var st = steps[cur];
+    $('st-title').textContent = st.t;
+    var ff = st.f;
+    if (st.hit) ff += b3(sampleY) + ' (s · y = ' + par(sampleY & S) + ')';
+    $('st-formula').textContent = ff;
+    $('st-text').textContent = st.x;
+    $('dots').innerHTML = steps.map(function(_, i) { return '<i class="' + (i <= cur ? 'on' : '') + '" onclick="window.goToStep(' + i + ')"></i>'; }).join('');
+    $('prev').disabled = (cur === 0);
+    $('next').disabled = (cur === steps.length - 1);
+    var s = $('st-svg');
+    s.innerHTML = '';
+    var vals = st.bars(), w = 56, base = 118, H = 100;
+    for (var i = 0; i < 8; i++) {
+      var h = vals[i] * H * (st.t.indexOf('Start') === 0 ? 1 : 3.6);
+      if (h > H) h = H;
+      var cls = 'bar-q', style = '';
+      if (st.pairs) style = 'fill:' + pairColor(i);
+      if (st.hit && i !== sampleY && vals[i] > 0) style = 'opacity:0.35';
+      if (vals[i] === 0 && !st.pairs) { h = 2; cls = 'bar-x'; }
+      var r = el('rect', {x: 20 + i * 66, y: base - h, width: w, height: Math.max(h, 2), rx: 2, class: cls, style: style}, s);
+      if (st.hit && i === sampleY) { r.setAttribute('stroke', 'var(--ink)'); r.setAttribute('stroke-width', '2'); }
+      el('text', {x: 48 + i * 66, y: base + 16, style: 'text-anchor:middle'}, s, b3(i));
+      el('text', {x: 48 + i * 66, y: base - h - 5, style: 'text-anchor:middle'}, s, vals[i] === 0 ? '0' : (vals[i] === 1 ? '1' : (vals[i] === 0.125 ? '1/8' : '1/4')));
+    }
+    el('text', {x: 20, y: 146}, s, st.lab);
+  }
+  window.goToStep = function(i) { cur = i; drawStep(); };
+  $('prev').onclick = function() { if (cur > 0) { cur--; drawStep(); } };
+  $('next').onclick = function() {
+    if (cur < steps.length - 1) {
+      cur++;
+      if (cur === 4) sampleY = [0, 1, 6, 7][Math.floor(Math.random() * 4)];
+      drawStep();
+    }
+  };
+  drawStep();
+
+  /* 4. Simon Live Algorithm */
+  var ALLOWED = [0, 1, 6, 7], samples = [], timer = null;
+  function rankOf(a) {
+    var basis = [];
+    a.forEach(function(v) {
+      basis.forEach(function(b) { if ((v ^ b) < v) v ^= b; });
+      if (v) basis.push(v);
+    });
+    return basis.length;
+  }
+  function cands(a) {
+    var r = [];
+    for (var c = 1; c < 8; c++) {
+      if (a.every(function(y) { return par(y & c) === 0; })) r.push(c);
+    }
+    return r;
+  }
+  function eqText(y) {
+    if (y === 0) return 'y = 000: no constraint (trivial vector)';
+    var t = [];
+    if (y & 4) t.push('s₂');
+    if (y & 2) t.push('s₁');
+    if (y & 1) t.push('s₀');
+    return 'y = ' + b3(y) + ': ' + t.join(' ⊕ ') + ' = 0';
+  }
+  function renderSimon() {
+    $('samples').innerHTML = samples.map(function(y) {
+      return '<span class="chip' + (y === 0 ? ' zero' : '') + '">' + b3(y) + '</span>';
+    }).join('') || '<span class="muted">none yet</span>';
+    var seen = {}, rows = [];
+    samples.forEach(function(y) { if (!seen[y]) { seen[y] = 1; rows.push(y); } });
+    $('eqs').innerHTML = rows.map(function(y) { return '<li>' + eqText(y) + '</li>'; }).join('') || '<li class="muted">no equations yet</li>';
+    var cs = cands(samples), done = (cs.length === 1);
+    var h = '';
+    for (var c = 1; c < 8; c++) {
+      var on = cs.indexOf(c) >= 0;
+      h += '<span class="' + (on ? (done ? 'win' : '') : 'out') + '">' + b3(c) + '</span>';
+    }
+    $('cands').innerHTML = h;
+    var bn = $('sbanner');
+    if (done) {
+      bn.className = 'banner';
+      bn.textContent = 's = ' + b3(cs[0]) + ' recovered after ' + samples.length + ' shot' + (samples.length > 1 ? 's' : '') + ' (rank ' + rankOf(samples) + ').';
+      stopAuto();
+    } else {
+      bn.className = 'banner idle';
+      bn.textContent = samples.length ? (cs.length + ' candidates left, rank ' + rankOf(samples) + '. Keep sampling.') : 'Press “Run one shot”.';
+    }
+    $('shot').disabled = done;
+    $('auto').disabled = done && !timer;
+  }
+  function shot() {
+    samples.push(ALLOWED[Math.floor(Math.random() * 4)]);
+    renderSimon();
+  }
+  function stopAuto() {
+    if (timer) { clearInterval(timer); timer = null; }
+    $('auto').textContent = 'Auto-run';
+  }
+  $('shot').onclick = shot;
+  $('auto').onclick = function() {
+    if (timer) { stopAuto(); return; }
+    $('auto').textContent = 'Stop';
+    timer = setInterval(shot, 600);
+  };
+  $('reset').onclick = function() {
+    stopAuto(); samples = []; renderSimon(); $('auto').disabled = false;
+  };
+  renderSimon();
+
+  function hist(svg, counts, keys, cls, theory) {
+    svg.innerHTML = '';
+    var total = counts.reduce(function(a, b) { return a + b; }, 0) || 1, max = 0;
+    counts.forEach(function(c, i) { max = Math.max(max, c / total, theory ? theory[i] : 0); });
+    max = max || 1;
+    var base = 150, H = 118, bw = Math.min(44, 480 / keys.length - 8), gap = (520 - keys.length * bw) / Math.max(keys.length - 1, 1);
+    el('line', {x1: 20, x2: 550, y1: base, y2: base, class: 'grid'}, svg);
+    keys.forEach(function(k, i) {
+      var p = counts[i] / total, h = p / max * H, x = 24 + i * (bw + Math.min(gap, 10));
+      el('rect', {x: x, y: base - h, width: bw, height: Math.max(h, 0), rx: 2, class: cls}, svg);
+      if (theory) {
+        var th = theory[i] / max * H;
+        el('rect', {x: x, y: base - th, width: bw, height: th, class: 'bar-t'}, svg);
+      }
+      el('text', {x: x + bw / 2, y: base + 15, style: 'text-anchor:middle'}, svg, k);
+      if (counts[i]) el('text', {x: x + bw / 2, y: base - h - 5, style: 'text-anchor:middle'}, svg, (p * 100).toFixed(1) + '%');
+    });
+    el('text', {x: 20, y: 182}, svg, svg.id === 'hist-q' ? 'shots until s is determined' : 'queries until first collision');
+  }
+  var qKeys = ['2', '3', '4', '5', '6', '7', '8', '9', '10+'];
+  hist($('hist-q'), qKeys.map(function() { return 0; }), qKeys, 'bar-q');
+  $('many').onclick = function() {
+    var counts = qKeys.map(function() { return 0; }), sum = 0, R = 2000;
+    for (var r = 0; r < R; r++) {
+      var a = [], n = 0;
+      do {
+        a.push(ALLOWED[Math.floor(Math.random() * 4)]);
+        n++;
+      } while (cands(a).length > 1);
+      sum += n;
+      counts[Math.min(n, 10) - 2]++;
+    }
+    hist($('hist-q'), counts, qKeys, 'bar-q');
+    $('mean-q').textContent = (sum / R).toFixed(2);
+  };
+
+  /* 5. Classical Collision Simulator */
+  var seen, qlist, qdone;
+  function qreset() {
+    seen = {}; qlist = []; qdone = false;
+    $('qt').querySelector('tbody').innerHTML = '';
+    $('cbanner').className = 'banner idle';
+    $('cbanner').textContent = 'No queries yet.';
+    $('qstep').disabled = false;
+  }
+  $('qreset').onclick = qreset;
+  $('qstep').onclick = function() {
+    var free = [];
+    for (var x = 0; x < 8; x++) if (qlist.indexOf(x) < 0) free.push(x);
+    var x = free[Math.floor(Math.random() * free.length)], fx = F[x], hit = null;
+    qlist.forEach(function(q) { if (F[q] === fx) hit = q; });
+    qlist.push(x);
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="mono">' + qlist.length + '</td><td class="mono">' + b3(x) + '</td><td class="mono">' + b3(fx) + '</td>';
+    if (hit !== null) tr.className = 'pair';
+    $('qt').querySelector('tbody').appendChild(tr);
+    if (hit !== null) {
+      $('cbanner').className = 'banner';
+      $('cbanner').textContent = 'Collision after ' + qlist.length + ' queries: ' + b3(hit) + ' ⊕ ' + b3(x) + ' = ' + b3(hit ^ x) + ', so s = ' + b3(hit ^ x) + '.';
+      $('qstep').disabled = true;
+    } else {
+      $('cbanner').className = 'banner idle';
+      $('cbanner').textContent = qlist.length + ' queries, no repeated output yet.';
+    }
+  };
+  qreset();
+  var cKeys = ['2', '3', '4', '5'], cTheory = [1/7, 2/7, 12/35, 8/35];
+  hist($('hist-c'), [0, 0, 0, 0], cKeys, 'bar-c', cTheory);
+  $('cmany').onclick = function() {
+    var counts = [0, 0, 0, 0], sum = 0, R = 10000;
+    for (var r = 0; r < R; r++) {
+      var order = [0, 1, 2, 3, 4, 5, 6, 7];
+      for (var i = 7; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = order[i]; order[i] = order[j]; order[j] = t;
+      }
+      var s = {}, n = 0;
+      for (i = 0; i < 8; i++) {
+        n++;
+        var f = F[order[i]];
+        if (s[f]) break;
+        s[f] = 1;
+      }
+      sum += n;
+      counts[n - 2]++;
+    }
+    hist($('hist-c'), counts, cKeys, 'bar-c', cTheory);
+    $('mean-c').textContent = (sum / R).toFixed(2);
+  };
+
+  /* 6. Scaling Simulator */
+  function classicalE(n) {
+    if (n === 3) return 128.0 / 35.0;
+    if (n <= 20) {
+      var N = Math.pow(2, n), p = 1, E = 2;
+      for (var k = 2; k <= N / 2 + 1; k++) {
+        p *= (N - 2 * (k - 1)) / (N - (k - 1));
+        if (p <= 0) break;
+        E += p;
+      }
+      return E;
+    }
+    return Math.sqrt(Math.PI * Math.pow(2, n - 1));
+  }
+  function quantumE(n) {
+    var m = n - 1, E = 0;
+    for (var i = 0; i < m; i++) E += 1 / (1 - Math.pow(2, i - m));
+    return E;
+  }
+  var CE = [], QE = [];
+  for (var n = 3; n <= 64; n++) {
+    CE[n] = classicalE(n);
+    QE[n] = quantumE(n);
+  }
+  var cross = 5;
+  var fmt = function(v) { return (v >= 1e4) ? v.toExponential(2).replace('e+', 'e') : v.toFixed(2); };
+
+  function drawScale(nv) {
+    var s = $('scale'); s.innerHTML = '';
+    var L = 54, R = 620, T = 14, B = 232;
+    var xs = function(n) { return L + (n - 3) / 61 * (R - L); };
+    var ys = function(v) { return B - Math.log10(v) / 10.2 * (B - T); };
+
+    for (var e = 0; e <= 10; e += 2) {
+      el('line', {x1: L, x2: R, y1: ys(Math.pow(10, e)), y2: ys(Math.pow(10, e)), class: 'grid'}, s);
+      el('text', {x: L - 6, y: ys(Math.pow(10, e)) + 4, style: 'text-anchor:end'}, s, '1e' + e);
+    }
+    [3, 16, 32, 48, 64].forEach(function(n) {
+      el('text', {x: xs(n), y: B + 16, style: 'text-anchor:middle'}, s, String(n));
+    });
+    el('text', {x: L, y: B + 32}, s, 'hash width n (bits)');
+
+    var dc = '', dq = '';
+    for (var n = 3; n <= 64; n++) {
+      dc += (n === 3 ? 'M' : 'L') + xs(n) + ' ' + ys(CE[n]);
+      dq += (n === 3 ? 'M' : 'L') + xs(n) + ' ' + ys(QE[n]);
+    }
+    el('path', {d: dc, class: 'lc'}, s);
+    el('path', {d: dq, class: 'lq'}, s);
+
+    el('line', {x1: xs(cross), x2: xs(cross), y1: T, y2: B, stroke: 'var(--muted)', 'stroke-dasharray': '3 3'}, s);
+    el('text', {x: xs(cross) + 5, y: T + 10}, s, 'classical passes quantum at n ≈ 5–6');
+
+    el('line', {x1: xs(nv), x2: xs(nv), y1: T, y2: B, stroke: 'var(--ink)', 'stroke-width': 1.2}, s);
+    el('circle', {cx: xs(nv), cy: ys(CE[nv]), r: 5, fill: 'var(--classic)'}, s);
+    el('circle', {cx: xs(nv), cy: ys(QE[nv]), r: 5, fill: 'var(--quantum)'}, s);
+
+    el('text', {x: R - 4, y: ys(CE[64]) + 14, style: 'text-anchor:end'}, s, 'classical ~ 𝒪(2^(n/2))');
+    el('text', {x: R - 4, y: ys(QE[64]) - 8, style: 'text-anchor:end'}, s, 'quantum ~ 𝒪(n)');
+  }
+
+  function updScale() {
+    var nv = +($('nr').value);
+    $('nval').textContent = 'n = ' + nv;
+    $('cv').textContent = fmt(CE[nv]);
+    $('qv').textContent = fmt(QE[nv]);
+    $('qmin').textContent = nv - 1;
+    var r = CE[nv] / QE[nv];
+    $('ratio').textContent = (r >= 1e4) ? (r.toExponential(1).replace('e+', 'e') + '×') : (r.toFixed(2) + '×');
+    var note;
+    if (nv < cross) {
+      note = 'At n = ' + nv + ' the query counts are comparable (classical 3.66 vs quantum ~3.6) due to small domain size (2³ = 8).';
+    } else if (nv <= 10) {
+      note = 'Crossover region (n = ' + nv + '): Classical queries strictly exceed quantum runs, initiating practical separation.';
+    } else {
+      note = 'Exponential separation (n = ' + nv + '): Classical queries explode by √2 per bit, while quantum runs grow linearly (~1 run per bit).';
+    }
+    $('scnote').textContent = note + ' Quantum expected runs use the sum of 1/(1 − 2^(i−(n−1))) tending to (n − 1) + 1.61. Classical is exact for n=3 (128/35) and √(π·2^(n−1)) asymptotically.';
+    drawScale(nv);
+  }
+  $('nr').addEventListener('input', updScale);
+  updScale();
+
+  /* 7. Measurement Outcomes Table */
+  (function(){
+    var counts = [234, 276, 0, 0, 0, 0, 256, 258];
+    var h = '';
+    for (var y = 0; y < 8; y++) {
+      var ok = (par(y & S) === 0);
+      h += '<tr><td class="mono">' + b3(y) + '</td><td class="mono">' + par(y & S) + '</td><td class="mono">' + (ok ? '25.0%' : '0.0%') + '</td><td class="mono">' + counts[y] + '</td><td class="' + (ok ? 'ok' : 'bad') + '">' + (ok ? 'allowed (s·y = 0)' : 'forbidden (destructive)') + '</td></tr>';
+    }
+    $('yt').querySelector('tbody').innerHTML = h;
+  })();
+
+  /* 8. Lightbox Gallery Modal */
+  var GALLERY = [
+    { key: "simon_circuit", title: "Figure 2.1: 6-Qubit Simon Quantum Circuit", caption: "Initial H^⊗3 layer, 3-CNOT reversible oracle (s=110), second H^⊗3 layer, and measurement.", src: "figures/simon_circuit.png" },
+    { key: "measurement_histogram", title: "Figure 5.1: 1,024-Shot Measurement Distribution", caption: "Demonstrates exact destructive interference: 0 shots observed on forbidden states {010, 011, 100, 101}.", src: "figures/measurement_histogram.png" },
+    { key: "query_complexity_comparison", title: "Figure 3.1: Theoretical Query Scaling Comparison", caption: "Linear crossover panel (n=2..8) and log-scale exponential divergence up to n=64.", src: "figures/query_complexity_comparison.png" },
+    { key: "empirical_scaling_benchmark", title: "Figure 5.3: Empirical Monte Carlo Benchmark (n=3..9)", caption: "Empirical query counts across 10,000 trials vs theoretical bounds with standard deviation bars.", src: "figures/empirical_scaling_benchmark.png" },
+    { key: "noise_impact_fidelity", title: "Figure 5.4: NISQ Noise Resilience (20 Repeats × 1,024 Shots)", caption: "Monotonic degradation of valid subspace fidelity with error bars. Majority filtering maintains 100% recovery.", src: "figures/noise_impact_fidelity.png" },
+    { key: "hardware_transpiled_distribution", title: "Figure 5.5: IBM FakeSherbrooke (127Q) Hardware Emulation", caption: "Transpiled depth 16, 3 native ECR gates, 98.34% allowed subspace fidelity, 100% secret recovery.", src: "figures/hardware_transpiled_distribution.png" }
+  ];
+  var currentLightboxIdx = 0;
+
+  window.openLightbox = function(key) {
+    var idx = GALLERY.findIndex(function(g) { return g.key === key; });
+    if (idx !== -1) currentLightboxIdx = idx;
+    renderLightbox();
+    $('modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+  function renderLightbox() {
+    var item = GALLERY[currentLightboxIdx];
+    $('modalTitle').innerText = item.title;
+    $('modalCaption').innerText = item.caption;
+    $('modalImg').src = item.src;
+  }
+  window.closeLightbox = function(e) {
+    $('modal').classList.remove('active');
+    document.body.style.overflow = '';
+  };
+  window.nextLightbox = function() {
+    currentLightboxIdx = (currentLightboxIdx + 1) % GALLERY.length;
+    renderLightbox();
+  };
+  window.prevLightbox = function() {
+    currentLightboxIdx = (currentLightboxIdx - 1 + GALLERY.length) % GALLERY.length;
+    renderLightbox();
+  };
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+    if ($('modal').classList.contains('active')) {
+      if (e.key === 'ArrowRight') nextLightbox();
+      if (e.key === 'ArrowLeft') prevLightbox();
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>

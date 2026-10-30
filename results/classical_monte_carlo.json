@@ -1,0 +1,13 @@
+{
+  "n": 3,
+  "trials": 10000,
+  "seed": 12345,
+  "mean_queries": 3.6504,
+  "std_queries": 0.9828427341136525,
+  "min_queries": 2,
+  "max_queries": 5,
+  "exact_theoretical_expectation": 3.657142857142857,
+  "theoretical_birthday_bound": 3.5449077018110318,
+  "worst_case_bound": 5,
+  "query_definition": "Number of f-evaluations made up to and including the one revealing collision"
+}

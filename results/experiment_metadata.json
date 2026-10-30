@@ -1,0 +1,37 @@
+{
+  "project_title": "Toy Hash Collision Structure: Finding a Hidden Period Using Simon's Algorithm",
+  "course": "23CS2037 - Quantum Computing",
+  "institution": "Karunya Institute of Technology and Sciences",
+  "team": "Team 14",
+  "members": [
+    {
+      "name": "Ahzam Hamza Karat",
+      "register_no": "URK24CS6012"
+    },
+    {
+      "name": "Gautham Manoj",
+      "register_no": "URK24CS1158"
+    }
+  ],
+  "timestamp": "2026-10-30T13:22:36.297788",
+  "python_version": "3.12.10",
+  "qiskit_version": "2.6.0",
+  "qiskit_aer_version": "0.18.0",
+  "configured_secret": "110",
+  "target_bits": 3,
+  "simulation_backend": "Qiskit AerSimulator",
+  "ideal_shots": 1024,
+  "random_seeds": {
+    "circuit_simulation": 42,
+    "classical_monte_carlo": 12345,
+    "empirical_scaling": 42,
+    "noise_sweep": 42
+  },
+  "query_accounting_definitions": {
+    "function_evaluation": "Classical black-box evaluation of f(x)",
+    "quantum_oracle_invocation": "Execution of unitary gate U_f inside quantum circuit (1 per shot)",
+    "measurement_sample": "One 3-bit string y measured from input register meas_x",
+    "independent_equation": "Non-zero measurement vector y increasing matrix rank over GF(2)"
+  },
+  "overall_status": "COMPLETED & VERIFIED"
+}

@@ -1,0 +1,128 @@
+{
+  "study_type": "Simulated NISQ Hardware Noise Study (Qiskit Aer NoiseModel)",
+  "hardware_claim": "SIMULATION ONLY - Not executed on real physical hardware",
+  "backend": "AerSimulator",
+  "error_rates_cnot": [
+    0.0,
+    0.005,
+    0.01,
+    0.015,
+    0.02,
+    0.03,
+    0.04,
+    0.05
+  ],
+  "valid_orthogonal_fraction": [
+    1.0,
+    0.983837890625,
+    0.969677734375,
+    0.95341796875,
+    0.938671875,
+    0.91201171875,
+    0.88154296875,
+    0.8537109375
+  ],
+  "majority_filtered_recovery_1024shots": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "raw_small_shot_recovery_rate": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "trial_details": [
+    {
+      "error_rate_cx": 0.0,
+      "repeats": 20,
+      "shots_per_repeat": 1024,
+      "valid_fraction_mean": 1.0,
+      "valid_fraction_std": 0.0,
+      "majority_recovery_rate": 1.0,
+      "raw_recovery_mean": 1.0,
+      "raw_recovery_std": 0.0
+    },
+    {
+      "error_rate_cx": 0.005,
+      "repeats": 20,
+      "shots_per_repeat": 1024,
+      "valid_fraction_mean": 0.983837890625,
+      "valid_fraction_std": 0.0031565031950964817,
+      "majority_recovery_rate": 1.0,
+      "raw_recovery_mean": 0.0,
+      "raw_recovery_std": 0.0
+    },
+    {
+      "error_rate_cx": 0.01,
+      "repeats": 20,
+      "shots_per_repeat": 1024,
+      "valid_fraction_mean": 0.969677734375,
+      "valid_fraction_std": 0.00674093443010439,
+      "majority_recovery_rate": 1.0,
+      "raw_recovery_mean": 0.0,
+      "raw_recovery_std": 0.0
+    },
+    {
+      "error_rate_cx": 0.015,
+      "repeats": 20,
+      "shots_per_repeat": 1024,
+      "valid_fraction_mean": 0.95341796875,
+      "valid_fraction_std": 0.0066814290949598915,
+      "majority_recovery_rate": 1.0,
+      "raw_recovery_mean": 0.0,
+      "raw_recovery_std": 0.0
+    },
+    {
+      "error_rate_cx": 0.02,
+      "repeats": 20,
+      "shots_per_repeat": 1024,
+      "valid_fraction_mean": 0.938671875,
+      "valid_fraction_std": 0.006526185330704539,
+      "majority_recovery_rate": 1.0,
+      "raw_recovery_mean": 0.0,
+      "raw_recovery_std": 0.0
+    },
+    {
+      "error_rate_cx": 0.03,
+      "repeats": 20,
+      "shots_per_repeat": 1024,
+      "valid_fraction_mean": 0.91201171875,
+      "valid_fraction_std": 0.006849178025429287,
+      "majority_recovery_rate": 1.0,
+      "raw_recovery_mean": 0.0,
+      "raw_recovery_std": 0.0
+    },
+    {
+      "error_rate_cx": 0.04,
+      "repeats": 20,
+      "shots_per_repeat": 1024,
+      "valid_fraction_mean": 0.88154296875,
+      "valid_fraction_std": 0.008988089415597368,
+      "majority_recovery_rate": 1.0,
+      "raw_recovery_mean": 0.0,
+      "raw_recovery_std": 0.0
+    },
+    {
+      "error_rate_cx": 0.05,
+      "repeats": 20,
+      "shots_per_repeat": 1024,
+      "valid_fraction_mean": 0.8537109375,
+      "valid_fraction_std": 0.011213897420670839,
+      "majority_recovery_rate": 1.0,
+      "raw_recovery_mean": 0.0,
+      "raw_recovery_std": 0.0
+    }
+  ],
+  "notes": "Single-qubit depolarizing error p_1q = p/10, readout error p_ro = p, two-qubit CNOT error p_2q = p. Evaluated across 20 repeats x 1,024 shots per error level with error bars (mean +/- 1 SD). Majority-filtered recovery achieves 100% across all rates; raw small-shot trials show stochastic noise corruption."
+}

@@ -1,0 +1,38 @@
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches and environments
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+env/
+venv/
+ENV/
+
+# Distribution / packaging artifacts
+*.zip
+*.tar.gz
+dist/
+build/
+*.egg-info/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Temporary files & editor backups
+*.tmp
+*.bak
+*~
+*.swp
+*.swo
+
+# Office temporary lock files
+~$*.docx
+

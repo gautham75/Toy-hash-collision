@@ -1,0 +1,86 @@
+[
+  {
+    "expected_s": "001",
+    "recovered_s": "001",
+    "rank": 2,
+    "equations": [
+      "100",
+      "010"
+    ],
+    "total_queries": 12,
+    "additional_runs": 0,
+    "success": true
+  },
+  {
+    "expected_s": "010",
+    "recovered_s": "010",
+    "rank": 2,
+    "equations": [
+      "100",
+      "101"
+    ],
+    "total_queries": 12,
+    "additional_runs": 0,
+    "success": true
+  },
+  {
+    "expected_s": "011",
+    "recovered_s": "011",
+    "rank": 2,
+    "equations": [
+      "100",
+      "111"
+    ],
+    "total_queries": 12,
+    "additional_runs": 0,
+    "success": true
+  },
+  {
+    "expected_s": "100",
+    "recovered_s": "100",
+    "rank": 2,
+    "equations": [
+      "010",
+      "011"
+    ],
+    "total_queries": 12,
+    "additional_runs": 0,
+    "success": true
+  },
+  {
+    "expected_s": "101",
+    "recovered_s": "101",
+    "rank": 2,
+    "equations": [
+      "101",
+      "010"
+    ],
+    "total_queries": 12,
+    "additional_runs": 0,
+    "success": true
+  },
+  {
+    "expected_s": "110",
+    "recovered_s": "110",
+    "rank": 2,
+    "equations": [
+      "111",
+      "110"
+    ],
+    "total_queries": 12,
+    "additional_runs": 0,
+    "success": true
+  },
+  {
+    "expected_s": "111",
+    "recovered_s": "111",
+    "rank": 2,
+    "equations": [
+      "101",
+      "110"
+    ],
+    "total_queries": 12,
+    "additional_runs": 0,
+    "success": true
+  }
+]

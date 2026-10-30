@@ -1,0 +1,56 @@
+{
+  "status": "COMPLETED",
+  "backend": "fake_sherbrooke",
+  "total_backend_qubits": 127,
+  "secret_target": "110",
+  "shots": 1024,
+  "transpiled_depth": 16,
+  "transpiled_ops": {
+    "rz": 22,
+    "sx": 11,
+    "barrier": 3,
+    "ecr": 3,
+    "measure": 3,
+    "x": 2
+  },
+  "two_qubit_gate_count": 3,
+  "allowed_states": [
+    "000",
+    "001",
+    "110",
+    "111"
+  ],
+  "forbidden_states": [
+    "010",
+    "011",
+    "100",
+    "101"
+  ],
+  "counts": {
+    "000": 230,
+    "001": 288,
+    "010": 3,
+    "011": 3,
+    "100": 4,
+    "101": 7,
+    "110": 255,
+    "111": 234
+  },
+  "allowed_shots": 1007,
+  "forbidden_shots": 17,
+  "subspace_fidelity": 0.9833984375,
+  "top4_bins": [
+    "001",
+    "110",
+    "111",
+    "000"
+  ],
+  "recovered_secret": "110",
+  "rank": 2,
+  "independent_equations": [
+    "111",
+    "110"
+  ],
+  "recovery_success": true,
+  "summary": "Under IBM FakeSherbrooke realistic 127-qubit calibration noise, the Simon circuit achieved 98.34% allowed subspace fidelity with 3 native ECR gates and depth 16. Post-selection majority voting successfully recovered secret period '110'."
+}
