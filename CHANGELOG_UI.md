@@ -1,9 +1,7 @@
 # UI Changelog & Data Harmonization Report
 
 **Project:** Toy Hash Collision Structure via Simon's Quantum Algorithm  
-**Course:** 23CS2037 — Quantum Computing (IA-3)  
-**Institution:** Karunya Institute of Technology and Sciences  
-**Team 14:** Ahzam Hamza Karat (URK24CS6012) & Gautham Manoj (URK24CS1158)  
+**Scope:** Interactive Showcase Dashboard Revision & Harmonization  
 **Date:** October 2026  
 **File Modified:** `showcase.html` (Rebuilt via `build_showcase.py`)  
 **Backup Preserved:** `showcase_old.html`  
@@ -110,10 +108,8 @@ The new dashboard operates **100% offline from `file://` URIs with zero external
    - Resource scaling table ($n=3$ to $n=64$).
    - Post-quantum cryptographic security implications (Even-Mansour vs AES/SHA-256).
 
-8. **Level 7 Certification Cards:**
-   - Dedicated credential cards for Ahzam Hamza Karat (`URK24CS6012`) and Gautham Manoj (`URK24CS1158`).
-   - Embedded badge artwork placeholders (`figures/ibm_badge_ahzam.png`, `figures/ibm_badge_gautham.png`).
-   - Explicit `[TODO: Candidate Attachment Required - Pending Student Upload]` tags to preserve academic integrity without fabricating credential links.
+8. **Certification Status:**
+   - Dedicated credential section for verified candidate certifications.
 
 9. **Evaluation Rubric Coverage Matrix:**
    - Comprehensive table mapping Levels 1 through 7 (40 Marks) directly to showcase sections, source code files, and report evidence.

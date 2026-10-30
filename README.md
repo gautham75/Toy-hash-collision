@@ -13,7 +13,7 @@
 
 ## 📌 Executive Summary
 
-This repository contains the authoritative research and software implementation for **Problem Statement 14 (Toy Hash Collision Structure)** in **23CS2037: Quantum Computing**.
+This repository contains the implementation and benchmark analysis for **Toy Hash Collision Structure: Simon's Quantum Algorithm vs Classical Attack**.
 
 We design, simulate, analyze, and physically emulate **Simon's Quantum Algorithm** against a specially constructed 3-bit toy hash function $f: \{0,1\}^3 \to \{0,1\}^3$ featuring a secret linear period $s = 110_2 = 6_{10}$ that generates systematic collisions.
 
@@ -42,19 +42,6 @@ We design, simulate, analyze, and physically emulate **Simon's Quantum Algorithm
 │ search without replacement    │         │ dual space: s · y ≡ 0 (mod 2) │
 └───────────────────────────────┘         └───────────────────────────────┘
 ```
-
----
-
-## 👥 Course & Team Credentials
-
-- **Institution:** Karunya Institute of Technology and Sciences
-- **Department:** Division of Computer Science and Engineering, School of Computer Science and Technology
-- **Course:** 23CS2037 — Quantum Computing (Skill-Based Assessment IA-3)
-- **Course Faculty:** Dr. Daniel Madan Raja S, Associate Professor, Dept. of CSE
-- **Course Coordinator:** Dr. Salaja S
-- **Team 14 Members:**
-  - **AHZAM HAMZA KARAT** (`URK24CS6012`)
-  - **GAUTHAM MANOJ** (`URK24CS1158`)
 
 ---
 
@@ -359,4 +346,4 @@ Our test suite ([`validation.py`](validation.py)) enforces 17 strict assertions 
 2. **Nielsen, M. A., & Chuang, I. L. (2010).** *"Quantum Computation and Quantum Information."* Cambridge University Press.
 3. **Qiskit Development Team (2026).** *"Qiskit: An Open-Source Framework for Quantum Computing."*
 4. **IBM Quantum Platform.** FakeSherbrooke 127-Qubit Eagle Processor calibration profiles.
-5. **Karunya Institute of Technology and Sciences.** Division of Computer Science and Engineering, Course 23CS2037 (Quantum Computing).
+5. **IBM Quantum & Qiskit Community.** Algorithmic tutorials on Simon's Algorithm.

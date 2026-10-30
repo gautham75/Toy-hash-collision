@@ -10,15 +10,10 @@ notebook = {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# 23CS2037 – Quantum Computing | Skill-Based Assessment (IA-3)\n",
+    "# Quantum Computing: Simon's Algorithm\n",
     "## Problem Statement 14: Toy Hash Collision Structure via Simon's Algorithm\n",
     "\n",
-    "**Team 14**:\n",
-    "- **AHZAM HAMZA KARAT** (`URK24CS6012`)\n",
-    "- **GAUTHAM MANOJ** (`URK24CS1158`)\n",
-    "\n",
-    "**Course Faculty**: Dr. Daniel Madan Raja S, Associate Professor, CSE, Karunya Institute of Technology and Sciences  \n",
-    "**Evaluation Target**: 40 Marks (Levels 1–7)"
+    "Implementation of Simon's quantum algorithm to identify hidden period $s = 110_2$ causing systematic collisions."
    ]
   },
   {

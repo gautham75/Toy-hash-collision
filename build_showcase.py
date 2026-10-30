@@ -126,7 +126,7 @@ def build():
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Toy Hash Collision: Simon's Quantum Algorithm vs Classical Attack</title>
-<meta name="description" content="Academic Project Dashboard: Problem 14 - Toy Hash Collision Structure via Simon's Quantum Algorithm vs Classical Attack. Course 23CS2037, Team 14.">
+<meta name="description" content="Interactive Evaluation Dashboard: Toy Hash Collision Structure via Simon's Quantum Algorithm vs Classical Attack.">
 <style>
 /* Streamlined Lab-Bench Styling: Dark-first, Teal = Quantum, Amber = Classical */
 :root {
@@ -440,12 +440,12 @@ details.advanced-panel .panel-body {
 
 <!-- 1. PROJECT OVERVIEW -->
 <header>
-  <div class="kicker">Karunya Institute of Technology and Sciences · Dept. of CSE · 23CS2037 Quantum Computing · IA-3</div>
+  <div class="kicker">Quantum Computing · Algorithmic Analysis &amp; Speedup</div>
   <h1 style="margin-top:8px">Toy Hash Collision: Simon's Quantum Algorithm</h1>
-  <p class="lede">Problem 14. A 3-bit hash function secretly satisfies the 2-to-1 promise f(x) = f(x ⊕ s) with hidden period s = 110. Simon's algorithm discovers s with 𝒪(n) quantum queries via constructive and destructive interference, outperforming the classical 𝒪(2<sup>n/2</sup>) birthday collision attack.</p>
+  <p class="lede">A 3-bit hash function secretly satisfies the 2-to-1 promise f(x) = f(x ⊕ s) with hidden period s = 110. Simon's algorithm discovers s with 𝒪(n) quantum queries via constructive and destructive interference, outperforming the classical 𝒪(2<sup>n/2</sup>) birthday collision attack.</p>
   <div class="meta">
-    <span>Team 14 · <b>Ahzam Hamza Karat</b> (URK24CS6012), <b>Gautham Manoj</b> (URK24CS1158)</span>
-    <span>Faculty · <b>Dr. Daniel Madan Raja S</b></span>
+    <span>Target · <b>Hidden Linear Period s = 110</b></span>
+    <span>Complexity · <b>𝒪(n) Quantum vs 𝒪(2<sup>n/2</sup>) Classical</b></span>
     <span>Stack · Qiskit 2.6.0 · Aer 0.18.0 · Python 3.12</span>
   </div>
 </header>

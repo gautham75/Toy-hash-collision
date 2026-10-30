@@ -1,18 +1,5 @@
 {
   "project_title": "Toy Hash Collision Structure: Finding a Hidden Period Using Simon's Algorithm",
-  "course": "23CS2037 - Quantum Computing",
-  "institution": "Karunya Institute of Technology and Sciences",
-  "team": "Team 14",
-  "members": [
-    {
-      "name": "Ahzam Hamza Karat",
-      "register_no": "URK24CS6012"
-    },
-    {
-      "name": "Gautham Manoj",
-      "register_no": "URK24CS1158"
-    }
-  ],
   "timestamp": "2026-10-30T13:22:36.297788",
   "python_version": "3.12.10",
   "qiskit_version": "2.6.0",

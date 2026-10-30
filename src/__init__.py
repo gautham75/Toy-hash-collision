@@ -1,4 +1,5 @@
 """
 Package for Simon's Quantum Algorithm vs Classical Attack simulation.
-Course: 23CS2037 - Quantum Computing | Team 14
+Problem Statement 14: Toy Hash Collision Structure.
 """
+

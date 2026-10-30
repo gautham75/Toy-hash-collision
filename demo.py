@@ -33,14 +33,11 @@ def main():
 
     print("""
   =======================================================================
-   KARUNYA INSTITUTE OF TECHNOLOGY AND SCIENCES - DEPT OF CSE
-   23CS2037: Quantum Computing | Skill-Based Assessment (IA-3)
-   TEAM 14: AHZAM HAMZA KARAT (URK24CS6012) & GAUTHAM MANOJ (URK24CS1158)
    PROBLEM STATEMENT 14: TOY HASH COLLISION STRUCTURE VIA SIMON'S ALGORITHM
   =======================================================================
     """)
     if not auto:
-        input("Press [ENTER] to begin the faculty evaluation showcase...")
+        input("Press [ENTER] to begin the showcase...")
 
     s_target = "110"
     n_bits = 3

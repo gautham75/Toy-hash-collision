@@ -1,7 +1,6 @@
 """
 Automated Verification, Correctness Test Suite & Independent Validation.
-Course: 23CS2037 - Quantum Computing | Team 14
-Students: Ahzam Hamza Karat (URK24CS6012) & Gautham Manoj (URK24CS1158)
+Problem Statement 14: Toy Hash Collision Structure via Simon's Quantum Algorithm.
 
 Executes Tests A through F:
 - Test A: Truth table & 2-to-1 properties (s = '110')
@@ -326,7 +325,6 @@ class TestToyHashCollisionSuite(unittest.TestCase):
 def run_all_tests():
     print("=" * 75)
     print(" AUTOMATED SYSTEM VERIFICATION SUITE - PROBLEM STATEMENT 14")
-    print(" Course: 23CS2037 - Quantum Computing | Team 14")
     print("=" * 75)
     suite = unittest.TestLoader().loadTestsFromTestCase(TestToyHashCollisionSuite)
     runner = unittest.TextTestRunner(verbosity=2)

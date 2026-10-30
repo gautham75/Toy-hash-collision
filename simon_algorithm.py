@@ -1,6 +1,6 @@
 """
 Simon's Quantum Algorithm Implementation, Circuit Synthesis & GF(2) Recovery.
-Course: 23CS2037 - Quantum Computing | Team 14
+Problem Statement 14: Toy Hash Collision Structure via Simon's Quantum Algorithm.
 
 Implements:
 - Reversible quantum oracle mapping |x>|0> -> |x>|f(x)>

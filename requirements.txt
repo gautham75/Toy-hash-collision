@@ -1,5 +1,4 @@
 # Requirements for Problem Statement 14: Toy Hash Collision via Simon's Algorithm
-# Course: 23CS2037 - Quantum Computing | Team 14
 qiskit>=2.0.0
 qiskit-aer>=0.18.0
 matplotlib>=3.9.0

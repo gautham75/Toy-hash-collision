@@ -1,6 +1,6 @@
 """
 Classical Collision Attack vs Quantum Simon's Algorithm: Complexity & Empirical Scaling.
-Course: 23CS2037 - Quantum Computing | Team 14
+Problem Statement 14: Toy Hash Collision Structure via Simon's Quantum Algorithm.
 
 Mathematical Framework:
 - Classical Birthday Attack: O(2^(n/2)) queries expected (~1.253 * sqrt(2^n))

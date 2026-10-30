@@ -1,11 +1,5 @@
 """
 =============================================================================
-KARUNYA INSTITUTE OF TECHNOLOGY AND SCIENCES
-Department of Computer Science and Engineering
-Course: 23CS2037 - Quantum Computing | Skill-Based Assessment (IA-3)
-Team 14:
-  - AHZAM HAMZA KARAT (URK24CS6012)
-  - GAUTHAM MANOJ     (URK24CS1158)
 Problem Statement 14:
   Toy hash collision structure: A 3-bit hash function has a hidden period s 
   that creates systematic collisions. Use Simon's algorithm to find s and 
@@ -45,8 +39,6 @@ def main():
     timestamp_str = datetime.datetime.now().isoformat()
 
     print_banner("14. TOY HASH COLLISION STRUCTURE VIA SIMON'S ALGORITHM")
-    print("Course: 23CS2037 - Quantum Computing | Assessment Scope: Levels 1 to 7")
-    print("Team 14: URK24CS6012 (Ahzam Hamza Karat) & URK24CS1158 (Gautham Manoj)")
     print(f"Environment: Python {sys.version.split()[0]} | Qiskit {qiskit.__version__} | Qiskit Aer {qiskit_aer.__version__}")
 
     # ---------------------------------------------------------
@@ -195,13 +187,6 @@ def main():
     # Save comprehensive experiment metadata
     metadata = {
         "project_title": "Toy Hash Collision Structure: Finding a Hidden Period Using Simon's Algorithm",
-        "course": "23CS2037 - Quantum Computing",
-        "institution": "Karunya Institute of Technology and Sciences",
-        "team": "Team 14",
-        "members": [
-            {"name": "Ahzam Hamza Karat", "register_no": "URK24CS6012"},
-            {"name": "Gautham Manoj", "register_no": "URK24CS1158"}
-        ],
         "timestamp": timestamp_str,
         "python_version": sys.version.split()[0],
         "qiskit_version": qiskit.__version__,
